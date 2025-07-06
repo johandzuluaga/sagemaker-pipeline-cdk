@@ -1,5 +1,6 @@
 from aws_cdk import (
     Stack,
+    aws_iam as iam,
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     RemovalPolicy,
@@ -33,4 +34,19 @@ class SageMakerTestStack(Stack):
             destination_bucket=raw_data_bucket,
             sources=[s3deploy.Source.asset(str(Path(__file__).parent.parent / "data"))],
             destination_key_prefix="titanic",
+        )
+
+        # Create IAM role for SageMaker
+        sagemaker_role = iam.Role(self, "SageMakerExecutionRole",
+            assumed_by=iam.ServicePrincipal("sagemaker.amazonaws.com"),
+            description="Role used by SageMaker processing and training jobs"
+        )
+
+        # Permissions to access S3 buckets
+        raw_data_bucket.grant_read(sagemaker_role)
+        processed_data_bucket.grant_read_write(sagemaker_role)
+
+        # Add policy
+        sagemaker_role.add_managed_policy(
+            iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess")
         )
