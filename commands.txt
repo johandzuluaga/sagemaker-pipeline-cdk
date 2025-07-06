@@ -1,0 +1,31 @@
+https://docs.aws.amazon.com/cdk/v2/guide/getting-started.html
+https://docs.aws.amazon.com/cdk/v2/guide/hello-world.html
+https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_s3/README.html
+
+Install aws cli
+msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+aws --version
+Create IAM User and Acces Keys
+
+Install node
+node -v
+npm -v
+
+npm install -g aws-cdk
+cdk --version
+
+python3 --version
+pip3 --version
+
+pip install virtualenv
+
+mkdir ml-pipeline-cdk
+cd ml-pipeline-cdk
+
+cdk init app --language python
+.venv\Scripts\activate
+
+pip install -r requirements.txt
+cdk bootstrap aws://<your-account-id>/<region>
+cdk deploy
+
