@@ -72,17 +72,18 @@ training_step = TrainingStep(
     },
 )
 
-# # Create model metrics object
-# model_metrics = ModelMetrics(
-#     model_statistics=MetricsSource(
-#         s3_uri=f"s3://{bucket_processed}/titanic/metrics/metrics.json",
-#         content_type="application/json"
-#     )
-# )
+# Create model metrics object
+model_metrics = ModelMetrics(
+    model_statistics=MetricsSource(
+        s3_uri=f"s3://{bucket_processed}/titanic/metrics/metrics.json",
+        content_type="application/json"
+    )
+)
 
 # Define the model using pipeline runtime output
 model = SKLearnModel(
     model_data=training_step.properties.ModelArtifacts.S3ModelArtifacts,
+    entry_point='scripts/inference.py',
     image_uri=sklearn_estimator.training_image_uri(),
     role=role_arn,
     sagemaker_session=pipeline_session
@@ -98,7 +99,8 @@ register_model_step = ModelStep(
         transform_instances=["ml.m5.large"],
         model_package_group_name="TitanicModelPackageGroup",
         approval_status="Approved",
-        description="Titanic survival prediction model"
+        description="Titanic survival prediction model",
+        model_metrics=model_metrics  # 👈 add this
     )
 )
 

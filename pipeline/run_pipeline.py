@@ -1,7 +1,5 @@
 from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.session import Session
-from sagemaker import get_execution_role
-import boto3
 
 # Your AWS SageMaker session
 sagemaker_session = Session()
