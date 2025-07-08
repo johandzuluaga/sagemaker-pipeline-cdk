@@ -15,6 +15,8 @@ from sagemaker.workflow.model_step import ModelStep
 from sagemaker.sklearn.model import SKLearnModel
 from sagemaker.workflow.pipeline_context import PipelineSession
 
+from sagemaker.workflow.functions import Join
+
 pipeline_session = PipelineSession()
 # sagemaker_session = sagemaker.session.Session()
 role_arn = "arn:aws:iam::728611193981:role/SageMakerTestStack-SageMakerExecutionRole7843F3B8-ue6AtEtiCRPx"
@@ -51,7 +53,8 @@ processing_step = ProcessingStep(
 
 # Define SKLearn Estimator
 sklearn_estimator = SKLearn(
-    entry_point="scripts/train.py",
+    entry_point="train.py",
+    source_dir="scripts",
     role=role_arn,
     instance_type="ml.m5.large",
     framework_version="0.23-1",
@@ -72,10 +75,19 @@ training_step = TrainingStep(
     },
 )
 
+metrics_s3_uri = Join(
+    on="/",
+    values=[
+        training_step.properties.ModelArtifacts.S3ModelArtifacts,
+        "..",  # go up from model.tar.gz
+        "metrics/metrics.json"
+    ]
+)
+
 # Create model metrics object
 model_metrics = ModelMetrics(
     model_statistics=MetricsSource(
-        s3_uri=f"s3://{bucket_processed}/titanic/metrics/metrics.json",
+        s3_uri=metrics_s3_uri,
         content_type="application/json"
     )
 )
@@ -83,7 +95,8 @@ model_metrics = ModelMetrics(
 # Define the model using pipeline runtime output
 model = SKLearnModel(
     model_data=training_step.properties.ModelArtifacts.S3ModelArtifacts,
-    entry_point='scripts/inference.py',
+    entry_point='inference.py',
+    source_dir='scripts',
     image_uri=sklearn_estimator.training_image_uri(),
     role=role_arn,
     sagemaker_session=pipeline_session
@@ -100,7 +113,7 @@ register_model_step = ModelStep(
         model_package_group_name="TitanicModelPackageGroup",
         approval_status="Approved",
         description="Titanic survival prediction model",
-        model_metrics=model_metrics  # 👈 add this
+        model_metrics=model_metrics
     )
 )
 

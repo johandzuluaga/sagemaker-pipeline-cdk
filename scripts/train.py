@@ -6,6 +6,7 @@ import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from model_utils import ReshapeWrapper
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -40,10 +41,12 @@ if __name__ == "__main__":
         }
     }
 
-    print("/opt/ml/output/metrics", exist_ok=True)
+    os.makedirs("/opt/ml/output/metrics", exist_ok=True)
 
     with open("/opt/ml/output/metrics/metrics.json", "w") as f:
         json.dump(metrics, f)
+
+    model = ReshapeWrapper(model)
 
     # Save model to /opt/ml/model (SageMaker expects this path)
     joblib.dump(model, "/opt/ml/model/model.joblib")
