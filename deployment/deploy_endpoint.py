@@ -58,13 +58,6 @@ create_endpoint_config_response = sagemaker_client.create_endpoint_config(
 # 4. Deploy the endpoint
 endpoint_name = "titanic-endpoint"
 
-# try:
-#     sagemaker_client.delete_endpoint(EndpointName=endpoint_name)
-#     print(f"Deleted previous endpoint: {endpoint_name}")
-# except sagemaker_client.exceptions.ClientError as e:
-#     if "Could not find endpoint" not in str(e):
-#         raise
-
 try:
     sagemaker_client.delete_endpoint(EndpointName=endpoint_name)
     print(f"Deleted previous endpoint: {endpoint_name}")

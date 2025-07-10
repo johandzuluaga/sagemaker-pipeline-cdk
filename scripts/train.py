@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     y_pred = model.predict(X_test)
 
-    # Assume you have y_test and y_pred from your evaluation
+    # Compute accuracy
     accuracy = accuracy_score(y_test, y_pred)
 
     # Save metrics

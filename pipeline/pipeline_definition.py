@@ -18,7 +18,7 @@ from sagemaker.workflow.pipeline_context import PipelineSession
 from sagemaker.workflow.functions import Join
 
 pipeline_session = PipelineSession()
-# sagemaker_session = sagemaker.session.Session()
+
 role_arn = "arn:aws:iam::728611193981:role/SageMakerTestStack-SageMakerExecutionRole7843F3B8-ue6AtEtiCRPx"
 bucket_raw = "ml-raw-data-johan"
 bucket_processed = "ml-processed-data-johan"
